@@ -1,0 +1,69 @@
+networks:
+  dem:
+    name: dem
+
+services:
+  restapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: restapi:v1.0.0
+    depends_on:
+      DB:
+        condition: service_healthy
+        restart: true
+      migration:
+        condition: service_completed_successfully
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      #This should be service name of DB from docker-compose file
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${APP_PORT}:8000"
+    networks:
+      - dem
+
+  DB:
+    image: postgres:17.3
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - ./data/db:/var/lib/postgresql/data 
+    networks:
+      - dem
+
+  migration:
+    image: restapi:v1.0.0
+    environment:
+      PYWAY_TYPE: "postgres"
+      PYWAY_TABLE: "pyway_schema_history"
+      PYWAY_DATABASE_HOST: ${POSTGRES_HOST}
+      PYWAY_DATABASE_NAME: ${POSTGRES_DB}
+      PYWAY_DATABASE_USERNAME: ${POSTGRES_USER}
+      PYWAY_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      PYWAY_DATABASE_PORT: ${POSTGRES_PORT} 
+      PYWAY_DATABASE_MIGRATION_DIR: "/app/migrations"
+    depends_on:
+      DB:
+        condition: service_healthy
+    command: >
+      sh -c "
+        pyway migrate
+        pyway info
+      "
+    networks:
+      - dem
