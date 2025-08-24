@@ -68,6 +68,8 @@ check_make() {
 install_docker() {
     if check_docker; then
         echo "Skipping Docker installation - already installed"
+        # Still fix permissions even if Docker is installed
+        fix_docker_permissions
         return 0
     fi
     
@@ -78,12 +80,37 @@ install_docker() {
     apt-get update -y
     apt-get install -y docker-ce docker-ce-cli containerd.io
     
-    # Note: systemctl won't work in Docker container, so skipping start and enable Docker commands here
-    echo "Docker installation completed."
+    # Fix Docker permissions
+    fix_docker_permissions
     
-    # Add current user to Docker group (if not root)
-    if [ "$USER" != "root" ]; then
+    echo "Docker installation completed."
+}
+
+# Function to fix Docker permissions
+fix_docker_permissions() {
+    echo "Fixing Docker permissions..."
+    
+    # Create docker group if it doesn't exist
+    groupadd docker 2>/dev/null || true
+    
+    # Add current user to docker group
+    if [ "$USER" != "root" ] && [ -n "$USER" ]; then
         usermod -aG docker $USER
+        echo "Added $USER to docker group"
+    fi
+    
+    # Fix socket permissions
+    if [ -S /var/run/docker.sock ]; then
+        chown root:docker /var/run/docker.sock
+        chmod 666 /var/run/docker.sock
+        echo "Fixed Docker socket permissions"
+    fi
+    
+    # Start Docker service if not running
+    if command -v systemctl &> /dev/null; then
+        systemctl start docker 2>/dev/null || true
+        systemctl enable docker 2>/dev/null || true
+        echo "Started Docker service"
     fi
 }
 
