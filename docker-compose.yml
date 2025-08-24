@@ -42,7 +42,7 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
     volumes:
-      - ./data/db:/var/lib/postgresql/data 
+      - postgres_data:/var/lib/postgresql/data 
     networks:
       - dem
 
@@ -67,3 +67,6 @@ services:
       "
     networks:
       - dem
+
+volumes:
+  postgres_data:    # Define named volume
