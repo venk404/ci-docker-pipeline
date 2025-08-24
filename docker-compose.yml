@@ -7,7 +7,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: restapi:v1.0.0
+    image: restapi:{tags}
+    container_name: restapi
     depends_on:
       DB:
         condition: service_healthy
@@ -29,6 +30,7 @@ services:
   DB:
     image: postgres:17.3
     restart: always
+    container_name: postgres-db
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -47,7 +49,8 @@ services:
       - dem
 
   migration:
-    image: restapi:v1.0.0
+    image: restapi:{tags}
+    container_name: migration
     environment:
       PYWAY_TYPE: "postgres"
       PYWAY_TABLE: "pyway_schema_history"
@@ -63,7 +66,6 @@ services:
     command: >
       sh -c "
         pyway migrate
-        pyway info
       "
     networks:
       - dem

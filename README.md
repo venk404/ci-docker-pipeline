@@ -99,9 +99,3 @@ make test
 4. **Deployment**
    - Trigger CD pipeline
 
-## API Documentation
-
-Access Swagger documentation at:
-```
-http://localhost:8000/docs
-```

@@ -67,6 +67,12 @@ jobs:
             libpq5
         shell: bash
 
+      - name: Get version from Git tags
+        id: get_versions
+        run: |
+          RESTAPI_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          echo "RESTAPI_VERSION=$RESTAPI_VERSION" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: Run Flake8
         run: make Code_linting
@@ -80,18 +86,12 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          tags: ${{ steps.get_versions.outputs.RESTAPI_VERSION }}
         run: make all
 
       - name: Run tests
         run: make test
       
-
-      - name: Get version from Git tags
-        id: get_versions
-        run: |
-          RESTAPI_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
-          echo "RESTAPI_VERSION=$RESTAPI_VERSION" >> $GITHUB_OUTPUT
-        shell: bash
 
           
       - name: Login to Docker Hub
@@ -146,5 +146,8 @@ jobs:
           event-type: update-image
           client-payload: ${{ steps.build-payload.outputs.payload }}
       
+      - name: Stop the application
+        run: make down
+
       - name: Clean up
         run: make clean
