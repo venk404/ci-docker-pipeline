@@ -112,20 +112,31 @@ jobs:
             org.opencontainers.image.version=${{ steps.get_versions.outputs.RESTAPI_VERSION }}
           outputs: type=registry
       
+
       - name: Build client payload
         id: build-payload
         run: |
-          payload=$(cat << 'EOF'
+          # Create JSON payload using jq directly (cleaner approach)
+          payload=$(jq -n \
+            --arg version "${{ steps.get_versions.outputs.RESTAPI_VERSION }}" \
+            --arg repo "${{ github.repository }}" \
+            --arg image "docker.io/${{ vars.DOCKERHUB_USERNAME }}/studentapi:v${{ steps.get_versions.outputs.RESTAPI_VERSION }}" \
+            '{
+              restapi_version: $version,
+              repository: $repo,
+              images: [$image]
+            }')
+          
+          # Debug: Show the payload
+          echo "Generated payload:"
+          echo "$payload" | jq .
+          
+          # Save to GitHub output for use in next step
           {
-            "restapi_version": "${{ steps.get_versions.outputs.RESTAPI_VERSION }}",
-            "repository": "${{ github.repository }}",
-            "images": []
-          }
-          EOF
-          )
-
-            payload=$(echo "$payload" | jq '.images += ["docker.io/${{ vars.DOCKERHUB_USERNAME }}/studentapi:${{ steps.get_versions.outputs.RESTAPI_VERSION }}"]')
-            echo "payload=$payload"
+            echo "payload<<EOF"
+            echo "$payload"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Trigger CD workflow in another repository
         uses: peter-evans/repository-dispatch@v2
