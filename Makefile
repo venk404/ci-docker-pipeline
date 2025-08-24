@@ -4,7 +4,7 @@
 # Variables
 # =======================
 VENV := venv
-IMAGE_NAME := venkateshtangaraj/restapi
+IMAGE_NAME := student-api
 tags := v1.0.0
 DOCKER_NETWORK := dem
 MIGRATION_SERVICE=migration
@@ -90,7 +90,7 @@ endif
 
 apply-migrations:
 	@echo "Running migrations..."
-	IMAGE_NAME=$(IMAGE_NAME) docker-compose up $(MIGRATION_SERVICE) -d	
+	docker-compose up $(MIGRATION_SERVICE) -d	
 	@echo "Migrations completed successfully."
 
 # =======================
@@ -98,12 +98,12 @@ apply-migrations:
 # =======================
 build-api:
 	@echo "Building Docker image for API..."
-	docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) .
-	@echo "Docker image $(IMAGE_NAME):$(IMAGE_VERSION) built"
+	docker build -t $(IMAGE_NAME):$(tags) .
+	@echo "Docker image $(IMAGE_NAME):$(tags) built"
 
 run-api: start-db apply-migrations
 	@echo "Starting REST API container..."
-	IMAGE_NAME=$(IMAGE_NAME) docker-compose up restapi -d
+	docker-compose up restapi -d
 	@echo "REST API container started"
 
 # =======================

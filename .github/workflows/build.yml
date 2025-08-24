@@ -87,6 +87,7 @@ jobs:
           POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           tags: ${{ steps.get_versions.outputs.RESTAPI_VERSION }}
+          Docker_Username: ${{ vars.DOCKERHUB_USERNAME }}
         run: make all
 
       - name: Run tests
@@ -156,6 +157,7 @@ jobs:
           POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           tags: ${{ steps.get_versions.outputs.RESTAPI_VERSION }}
+          Docker_Username: ${{ vars.DOCKERHUB_USERNAME }}
         run: make down
 
       - name: Clean up
