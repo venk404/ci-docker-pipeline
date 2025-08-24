@@ -55,6 +55,7 @@ jobs:
         run: |
           chmod +x ./setup.sh
           sudo ./setup.sh
+          sudo apt install -y jq
 
       - name: Install Ubuntu dependencies
         run: |
