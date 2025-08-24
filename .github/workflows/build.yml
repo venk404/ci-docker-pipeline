@@ -127,11 +127,13 @@ jobs:
             payload=$(echo "$payload" | jq '.images += ["docker.io/${{ vars.DOCKERHUB_USERNAME }}/studentapi:v${{ steps.get_versions.outputs.RESTAPI_VERSION }}"]')
             echo "payload=$payload"
 
-      # - name: Trigger CD workflow in another repository
-      #   if: steps.changed-files.outputs.code_any_changed == 'true' || steps.changed-files.outputs.db_any_changed == 'true'
-      #   uses: peter-evans/repository-dispatch@v2
-      #   with:
-      #     token: ${{ secrets.PAT_TOKEN }}
-      #     repository: venk404/venk404-Implementing-Continuous-Delivery-with-ArgoCD
-      #     event-type: update-image
-      #     client-payload: ${{ steps.build-payload.outputs.payload }}
+      - name: Trigger CD workflow in another repository
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          repository: venk404/venk404-Implementing-Continuous-Delivery-with-ArgoCD
+          event-type: update-image
+          client-payload: ${{ steps.build-payload.outputs.payload }}
+      
+      - name: Clean up
+        run: make clean
