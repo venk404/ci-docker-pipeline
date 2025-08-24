@@ -5,7 +5,7 @@
 # =======================
 VENV := venv
 IMAGE_NAME := venkateshtangaraj/restapi
-IMAGE_VERSION := v1.0.0
+tags := v1.0.0
 DOCKER_NETWORK := dem
 MIGRATION_SERVICE=migration
 
@@ -90,7 +90,7 @@ endif
 
 apply-migrations:
 	@echo "Running migrations..."
-	docker-compose up $(MIGRATION_SERVICE) -d	
+	IMAGE_NAME=$(IMAGE_NAME) docker-compose up $(MIGRATION_SERVICE) -d	
 	@echo "Migrations completed successfully."
 
 # =======================
@@ -103,7 +103,7 @@ build-api:
 
 run-api: start-db apply-migrations
 	@echo "Starting REST API container..."
-	docker-compose up restapi -d
+	IMAGE_NAME=$(IMAGE_NAME) docker-compose up restapi -d
 	@echo "REST API container started"
 
 # =======================
