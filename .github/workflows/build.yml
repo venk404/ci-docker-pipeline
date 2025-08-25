@@ -121,7 +121,7 @@ jobs:
           payload=$(jq -n \
             --arg version "${{ steps.get_versions.outputs.RESTAPI_VERSION }}" \
             --arg repo "${{ github.repository }}" \
-            --arg image "docker.io/${{ vars.DOCKERHUB_USERNAME }}/studentapi:v${{ steps.get_versions.outputs.RESTAPI_VERSION }}" \
+            --arg image "docker.io/${{ vars.DOCKERHUB_USERNAME }}/studentapi:${{ steps.get_versions.outputs.RESTAPI_VERSION }}" \
             '{
               restapi_version: $version,
               repository: $repo,
