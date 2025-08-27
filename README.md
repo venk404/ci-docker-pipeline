@@ -25,7 +25,8 @@ This repository demonstrates a comprehensive CI/CD pipeline using GitHub Actions
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/venk404/Final-CI-Application.git
+   git clone https://github.com/venk404/ci-docker-pipeline.git
+   cd ci-docker-pipeline/
    ```
 
 2. **Build and Run**
@@ -99,3 +100,14 @@ make test
 4. **Deployment**
    - Trigger CD pipeline
 
+
+## Conclusions
+
+All the expectations have been met for **Milestone 4**:
+
+- ✅ CI pipeline created to build and push Docker images to a central registry (DockerHub/GitHub Container Registry).  
+- ✅ Pipeline stages implemented: Build API, Run tests, Code linting, Docker login, Docker build and push.  
+- ✅ Appropriate Makefile targets used for building, testing, and linting.  
+- ✅ CI pipeline runs on a self-hosted GitHub runner.  
+- ✅ Pipeline triggered only on changes in the code directory.  
+- ✅ Manual pipeline trigger supported for developers.  
