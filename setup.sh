@@ -3,11 +3,6 @@
 # Function to update system packages
 
 export DEBIAN_FRONTEND=noninteractive
-export TZ=UTC
-
-# Pre-configure timezone package
-ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
-echo $TZ > /etc/timezone
 
 # Version requirements
 DOCKER_COMPOSE_MIN_VERSION="2.20.0"
