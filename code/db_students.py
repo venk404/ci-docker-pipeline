@@ -1,3 +1,8 @@
+"""
+Database operations module for student management.
+Handles CRUD operations for the student database using PostgreSQL.
+"""
+
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
