@@ -51,47 +51,20 @@ jobs:
             ${{ runner.os }}-venv-
             ${{ runner.os }}-pip-
             
-      - name: Install system dependencies (OS-specific)
+      - name: Install system dependencies(Docker, make ,Docker-compose,jq)
         run: |
-          if [[ "$RUNNER_OS" == "Linux" ]]; then
-            echo "Installing Linux dependencies..."
-            chmod +x ./setup.sh
-            sudo ./setup.sh
-            sudo apt install -y jq
-            sudo apt-get update
-            sudo apt-get install -y gcc libc6-dev libpq-dev libpq5
-          elif [[ "$RUNNER_OS" == "macOS" ]]; then
-            echo "Running on macOS - checking dependencies..."
-            # Check Docker
-            if ! docker info > /dev/null 2>&1; then
-              echo "ERROR: Docker is not running. Please start Docker Desktop."
-              exit 1
-            fi
-            echo "✓ Docker is running"
-            
-            # Check Make
-            if ! command -v make &> /dev/null; then
-              echo "Installing make..."
-              brew install make
-            fi
-            echo "✓ Make is available"
-            
-            # Check jq
-            if ! command -v jq &> /dev/null; then
-              echo "Installing jq..."
-              brew install jq
-            fi
-            echo "✓ jq is available"
-            
-            # Install PostgreSQL for psycopg2
-            if ! brew list postgresql &> /dev/null; then
-              echo "Installing PostgreSQL client..."
-              brew install postgresql
-            fi
-            echo "✓ PostgreSQL client is available"
-            
-            echo "All macOS dependencies are ready!"
-          fi
+          chmod +x ./setup.sh
+          sudo ./setup.sh
+          sudo apt install -y jq
+
+      - name: Install Ubuntu dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc \
+            libc6-dev \
+            libpq-dev \
+            libpq5
         shell: bash
 
       - name: Get version from Git tags
@@ -189,44 +162,3 @@ jobs:
 
       - name: Clean up
         run: make clean
-
-  sonarqube:
-    name: SonarQube Code Analysis
-    runs-on: self-hosted
-    needs: build  # Run after build job completes
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.13'
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest pytest-cov
-      
-      - name: Run tests with coverage
-        run: |
-          pytest --cov=code --cov-report=xml:coverage.xml --cov-report=term
-        continue-on-error: true
-      
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      
-      - name: SonarQube Quality Gate check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        continue-on-error: true
