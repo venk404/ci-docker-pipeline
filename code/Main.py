@@ -1,3 +1,8 @@
+"""
+FastAPI Student Management System with SonarQube Integration
+This API provides CRUD operations for student management.
+"""
+
 from fastapi import FastAPI, HTTPException
 from fastapi import APIRouter, Request, Response
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
