@@ -51,20 +51,24 @@ jobs:
             ${{ runner.os }}-venv-
             ${{ runner.os }}-pip-
             
-      - name: Install system dependencies(Docker, make ,Docker-compose,jq)
+      - name: Install system dependencies (OS-specific)
         run: |
-          chmod +x ./setup.sh
-          sudo ./setup.sh
-          sudo apt install -y jq
-
-      - name: Install Ubuntu dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            gcc \
-            libc6-dev \
-            libpq-dev \
-            libpq5
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            echo "Installing Linux dependencies..."
+            chmod +x ./setup.sh
+            sudo ./setup.sh
+            sudo apt install -y jq
+            sudo apt-get update
+            sudo apt-get install -y gcc libc6-dev libpq-dev libpq5
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            echo "Running on macOS - skipping Linux-specific dependencies"
+            # On Mac, assume Docker Desktop and make are already installed
+            which docker || echo "Warning: Docker not found. Install Docker Desktop"
+            which make || brew install make
+            which jq || brew install jq
+            # Install PostgreSQL client libraries for Mac
+            brew install postgresql || true
+          fi
         shell: bash
 
       - name: Get version from Git tags
