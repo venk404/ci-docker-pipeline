@@ -61,13 +61,36 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y gcc libc6-dev libpq-dev libpq5
           elif [[ "$RUNNER_OS" == "macOS" ]]; then
-            echo "Running on macOS - skipping Linux-specific dependencies"
-            # On Mac, assume Docker Desktop and make are already installed
-            which docker || echo "Warning: Docker not found. Install Docker Desktop"
-            which make || brew install make
-            which jq || brew install jq
-            # Install PostgreSQL client libraries for Mac
-            brew install postgresql || true
+            echo "Running on macOS - checking dependencies..."
+            # Check Docker
+            if ! docker info > /dev/null 2>&1; then
+              echo "ERROR: Docker is not running. Please start Docker Desktop."
+              exit 1
+            fi
+            echo "✓ Docker is running"
+            
+            # Check Make
+            if ! command -v make &> /dev/null; then
+              echo "Installing make..."
+              brew install make
+            fi
+            echo "✓ Make is available"
+            
+            # Check jq
+            if ! command -v jq &> /dev/null; then
+              echo "Installing jq..."
+              brew install jq
+            fi
+            echo "✓ jq is available"
+            
+            # Install PostgreSQL for psycopg2
+            if ! brew list postgresql &> /dev/null; then
+              echo "Installing PostgreSQL client..."
+              brew install postgresql
+            fi
+            echo "✓ PostgreSQL client is available"
+            
+            echo "All macOS dependencies are ready!"
           fi
         shell: bash
 
