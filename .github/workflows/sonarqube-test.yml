@@ -12,7 +12,7 @@ on:
 jobs:
   sonarqube-analysis:
     name: SonarQube Analysis
-    runs-on: ubuntu-latest  # Uses GitHub cloud runner (has everything pre-installed)
+    runs-on: self-hosted  # Uses your local Mac runner (can access internal SonarQube server)
     
     steps:
       - name: Checkout code
