@@ -1,21 +1,23 @@
 name: Build the PR
 
+# Temporarily disabled - only manual trigger
+# Re-enable by uncommenting push/pull_request sections when ready
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - 'code/**'
-      - 'test/**'
-      - 'DB/Schemas/**'
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - 'code/**'
-      - 'test/**'
-      - 'DB/Schemas/**'
-    branches:
-      - master
-      - main
+  # push:
+  #   branches: [ "main" ]
+  #   paths:
+  #     - 'code/**'
+  #     - 'test/**'
+  #     - 'DB/Schemas/**'
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
+  #   paths:
+  #     - 'code/**'
+  #     - 'test/**'
+  #     - 'DB/Schemas/**'
+  #   branches:
+  #     - master
+  #     - main
   workflow_dispatch:
       reason:
         description: 'Reason for manual trigger'
