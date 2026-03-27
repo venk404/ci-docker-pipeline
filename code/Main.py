@@ -1,6 +1,6 @@
 """
 FastAPI Student Management System with SonarQube Integration
-This API provides CRUD operations for student management.
+This API provides CRUD operations for student management with PostgreSQL.
 """
 
 from fastapi import FastAPI, HTTPException
