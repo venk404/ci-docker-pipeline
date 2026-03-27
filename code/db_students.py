@@ -1,6 +1,7 @@
 """
 Database operations module for student management.
 Handles CRUD operations for the student database using PostgreSQL.
+Provides functions for insert, update, delete, and retrieve operations.
 """
 
 import psycopg2
