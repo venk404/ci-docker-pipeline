@@ -50,7 +50,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=venk404_ci-docker-pipeline
-            -Dsonar.projectName=CI Docker Pipeline
+            -Dsonar.projectName="CI Docker Pipeline"
             -Dsonar.sources=code
             -Dsonar.tests=test
             -Dsonar.python.version=3.13
