@@ -56,4 +56,5 @@ jobs:
             -Dsonar.python.version=3.13
             -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.exclusions=**/venv/**,**/__pycache__/**,**/actions-runner/**,**/DB/**
+            -Dsonar.qualitygate.wait=false
         continue-on-error: true
