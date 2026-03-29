@@ -13,6 +13,8 @@ jobs:
   sonarqube-analysis:
     name: SonarQube Analysis
     runs-on: self-hosted  # Uses your local Mac runner (can access internal SonarQube server)
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     
     steps:
       - name: Checkout code
